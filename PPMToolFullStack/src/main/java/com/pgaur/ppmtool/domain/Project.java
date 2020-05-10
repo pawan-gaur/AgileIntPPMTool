@@ -1,6 +1,7 @@
 package com.pgaur.ppmtool.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -18,7 +19,7 @@ public class Project {
     private String projectName;
 
     @NotBlank(message = "Project Identifier is required")
-    @Size(min = 3, max = 6, message = "Please use 3 to 6 characters")
+    @Size(min = 3, max = 9, message = "Please use 3 to 6 characters")
     @Column(updatable = false, unique = true)
     private String projectIdentifier;
 
@@ -32,10 +33,18 @@ public class Project {
     private Date end_date;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
+    @Column(updatable = false)
     private Date createdAt;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date udpated_At;
+
+    private boolean isActive;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    @JsonIgnore
+    private Backlog backlog;
+
 
     public Project() {
     }
@@ -104,9 +113,26 @@ public class Project {
         this.udpated_At = udpated_At;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Backlog getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(Backlog backlog) {
+        this.backlog = backlog;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
+        this.isActive = true;
     }
 
     @PreUpdate
