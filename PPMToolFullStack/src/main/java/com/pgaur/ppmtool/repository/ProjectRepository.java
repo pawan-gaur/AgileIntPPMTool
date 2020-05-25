@@ -12,4 +12,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Project findByProjectIdentifier(String projectID);
 
     List<Project> findAllByIsActive(boolean status);
+
+    List<Project> findAllByProjectLeader(String username);
 }
